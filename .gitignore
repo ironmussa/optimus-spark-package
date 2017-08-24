@@ -55,7 +55,6 @@ fabric.properties
 *.pyc
 sbt/*.jar
 
-*.class
 
 # sbt specific
 .cache/
@@ -66,4 +65,5 @@ lib_managed/
 src_managed/
 project/boot/
 project/plugins/project/
-project/project/target/*
+project/project/target
+target/
