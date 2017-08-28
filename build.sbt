@@ -7,14 +7,12 @@ sparkVersion := "2.2.0"
 
 version := "0.7.5"
 
-spAppendScalaVersion := true
-
 // change the value below to change the directory where your zip artifact will be created
 spDistDirectory := target.value
 
-licenses := Seq("Apache-2.0" -> url("https://github.com/brkyvz/demo-scala-python/blob/master/LICENSE"))
+licenses := Seq("Apache-2.0" -> url("https://github.com/ironmussa/Optimus/blob/master/LICENSE"))
 
 sparkComponents ++= Seq("mllib", "sql", "core")
 
 // add any sparkPackageDependencies using sparkPackageDependencies.
-spName := "ironmussa/Optimus"
+spName := "ironmussa/optimus"
