@@ -12,7 +12,7 @@ spDistDirectory := target.value
 
 licenses := Seq("Apache-2.0" -> url("https://github.com/ironmussa/Optimus/blob/master/LICENSE"))
 
+// add any sparkPackageDependencies using sparkPackageDependencies.
 sparkComponents ++= Seq("mllib", "sql", "core")
 
-// add any sparkPackageDependencies using sparkPackageDependencies.
-spName := "ironmussa/optimus"
+spName := "ironmussa/Optimus"
