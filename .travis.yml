@@ -8,9 +8,10 @@ jdk:
 
 script:
   - sbt spDist
+  - sbt clean coverage test
 
 after_success:
-  - sbt clean coverage test coverageAggregate coveralls
+  - sbt coverageReport coveralls
 
 env:
   global:
