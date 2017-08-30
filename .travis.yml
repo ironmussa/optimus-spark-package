@@ -8,7 +8,6 @@ jdk:
 
 script:
   - sbt spDist
-  - sbt clean test
 
 after_success:
   - sbt clean coverage test coverageAggregate coveralls
