@@ -5,7 +5,7 @@ scalaVersion := "2.11.0"
 
 sparkVersion := "2.2.0"
 
-version := "0.7.5"
+version := "1.0.0"
 
 // change the value below to change the directory where your zip artifact will be created
 spDistDirectory := target.value

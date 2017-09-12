@@ -70,7 +70,9 @@ class DataFrameTransformer:
         self._df = df
 
     def get_data_frame(self):
-        """This function return the dataframe of the class"""
+        """This function return the dataframe of the class
+        :rtype: pyspark.sql.dataframe.DataFrame
+        """
         return self._df
 
     def lower_case(self, columns):
@@ -210,25 +212,25 @@ class DataFrameTransformer:
         # Returning the transformer object for able chaining operations
         return self
 
-    def replace_col(self, search, changeTo, columns):
+    def replace_col(self, search, change_to, columns):
         """This method search the 'search' value in DataFrame columns specified in 'columns' in order to replace it
-        for 'changeTo' value.
+        for 'change_to' value.
 
 
         :param search       value to search in dataFrame.
-        :param changeTo     value used to replace the old one in dataFrame.
+        :param change_to     value used to replace the old one in dataFrame.
         :param columns      list of string column names or a string (column name). If columns = '*' is provided,
                             searching and replacing action is made in all columns of DataFrame that have same
-                            dataType of search and changeTo.
+                            dataType of search and change_to.
 
-        search and changeTo arguments are expected to be numbers and same dataType ('integer', 'string', etc) each other.
+        search and change_to arguments are expected to be numbers and same dataType ('integer', 'string', etc) each other.
         olumns argument is expected to be a string or list of string column names.
 
         :return transformer object
         """
 
         def col_replace(columns):
-            self._df = self._df.replace(search, changeTo, subset=columns)
+            self._df = self._df.replace(search, change_to, subset=columns)
 
         # Check if columns argument must be a string or list datatype:
         self._assert_type_str_or_list(columns, "columns")
@@ -238,13 +240,13 @@ class DataFrameTransformer:
                                                                                   int), \
             "Error: Search parameter must be a number or string"
 
-        # Asserting changeTo parameter is a string or a number
-        assert isinstance(changeTo, str) or isinstance(changeTo, float) or isinstance(changeTo,
-                                                                                      int),\
-            "Error: changeTo parameter must be a number or string"
+        # Asserting change_to parameter is a string or a number
+        assert isinstance(change_to, str) or isinstance(change_to, float) or isinstance(change_to,
+                                                                                        int),\
+            "Error: change_to parameter must be a number or string"
 
-        # Asserting search and changeTo have same type
-        assert isinstance(search, type(changeTo)), \
+        # Asserting search and change_to have same type
+        assert isinstance(search, type(change_to)), \
             'Error: Search and ChangeTo must have same datatype: Integer, String, Float'
 
         # Change
@@ -278,7 +280,7 @@ class DataFrameTransformer:
         """This function is an alias of filter and where spark functions.
         :param func     func must be an expression with the following form:
 
-                func = col('colName') > value.
+                func = col('col_name') > value.
 
                 func is an expression where col is a pyspark.sql.function.
         """
@@ -453,11 +455,11 @@ class DataFrameTransformer:
             col_not_valids == set()), 'Error: The following columns do not have same datatype argument provided: %s' \
                                     % col_not_valids
 
-        def rm_spec_chars(inputStr):
+        def rm_spec_chars(input_str):
             # Remove all punctuation and control characters
-            for punct in (set(inputStr) & set(string.punctuation)):
-                inputStr = inputStr.replace(punct, "")
-            return inputStr
+            for punct in (set(input_str) & set(string.punctuation)):
+                input_str = input_str.replace(punct, "")
+            return input_str
 
         # User define function that does operation in cells
         function = udf(lambda cell: rm_spec_chars(cell) if cell is not None else cell, StringType())
@@ -590,19 +592,19 @@ class DataFrameTransformer:
         # User defined function to search cell value in list provide by user:
         if isinstance(str_to_replace, str) and list_str is not None:
 
-            def revisar(cell):
+            def check(cell):
                 if cell is not None and (cell in list_str):
                     return str_to_replace
                 else:
                     return cell
 
-            func = udf(lambda cell: revisar(cell), StringType())
+            func = udf(lambda cell: check(cell), StringType())
         else:
-            def replace_from_dic(strTest):
+            def replace_from_dic(str_test):
                 for key in str_to_replace.keys():
-                    if strTest in str_to_replace[key]:
-                        strTest = key
-                return strTest
+                    if str_test in str_to_replace[key]:
+                        str_test = key
+                return str_test
 
             func = udf(lambda cell: replace_from_dic(cell) if cell is not None else cell, StringType())
 
@@ -673,26 +675,26 @@ class DataFrameTransformer:
 
         return self
 
-    def explode_table(self, colId, col1, new_col_feature, listToAssign):
+    def explode_table(self, col_id, col1, new_col_feature, list_to_assign):
         """
         This function can be used to split a feature with some extra information in order
         to make a new column feature.
 
-        :param colId    column name of the columnId of dataFrame
+        :param col_id    column name of the columnId of dataFrame
         :param col1     column name of the column to be split.
         :param new_col_feature        Name of the new column.
-        :param listToAssign         List of values to be counted.
+        :param list_to_assign         List of values to be counted.
 
         Please, see documentation for more explanations about this method.
 
         """
         # Asserting if position is string or list:
 
-        assert isinstance(listToAssign, list), "Error: listToAssign argument must be a list"
+        assert isinstance(list_to_assign, list), "Error: list_to_assign argument must be a list"
 
         # Asserting parameters are not empty strings:
         assert (
-            (colId != '') and (col1 != '') and (new_col_feature != '')), "Error: Input parameters can't be empty strings"
+            (col_id != '') and (col1 != '') and (new_col_feature != '')), "Error: Input parameters can't be empty strings"
 
         # Check if col1 argument is string datatype:
         self._assert_type_str(col1, "col1")
@@ -700,37 +702,37 @@ class DataFrameTransformer:
         # Check if new_col_feature argument is a string datatype:
         self._assert_type_str(new_col_feature, "new_col_feature")
 
-        # Check if colId argument is a string datatype:
-        self._assert_type_str(colId, "colId")
+        # Check if col_id argument is a string datatype:
+        self._assert_type_str(col_id, "col_id")
 
-        # Check if colId to be process are in dataframe
-        self._assert_cols_in_df(columns_provided=[colId], columns_df=self._df.columns)
+        # Check if col_id to be process are in dataframe
+        self._assert_cols_in_df(columns_provided=[col_id], columns_df=self._df.columns)
 
         # Check if col1 to be process are in dataframe
         self._assert_cols_in_df(columns_provided=[col1], columns_df=self._df.columns)
 
         # subset, only PAQ and Tipo_Unidad:
-        subdf = self._df.select(colId, col1)
+        subdf = self._df.select(col_id, col1)
 
         # dataframe Filtered:
         df_mod = self._df.where(self._df[col1] != new_col_feature)
 
         # subset de
-        new_column = subdf.where(subdf[col1] == new_col_feature).groupBy(colId).count()
+        new_column = subdf.where(subdf[col1] == new_col_feature).groupBy(col_id).count()
 
         # Left join:
-        new_column = new_column.withColumnRenamed(colId, colId + '_other')
+        new_column = new_column.withColumnRenamed(col_id, col_id + '_other')
 
-        for x, _ in enumerate(listToAssign):
+        for x, _ in enumerate(list_to_assign):
             if x == 0:
-                exprs = (df_mod[colId] == new_column[colId + '_other']) & (df_mod[col1] == listToAssign[x])
+                exprs = (df_mod[col_id] == new_column[col_id + '_other']) & (df_mod[col1] == list_to_assign[x])
             else:
-                exprs = exprs | (df_mod[colId] == new_column[colId + '_other']) & (df_mod[col1] == listToAssign[x])
+                exprs = exprs | (df_mod[col_id] == new_column[col_id + '_other']) & (df_mod[col1] == list_to_assign[x])
 
         df_mod = df_mod.join(new_column, exprs, 'left_outer')
 
         # Cleaning dataframe:
-        df_mod = df_mod.drop(colId + '_other').na.fill(0).withColumnRenamed('count', new_col_feature)
+        df_mod = df_mod.drop(col_id + '_other').na.fill(0).withColumnRenamed('count', new_col_feature)
         self._df = df_mod
 
         self._add_transformation()  # checkpoint in case
@@ -786,12 +788,12 @@ class DataFrameTransformer:
         assert column in self._df.columns, "Error: Column assigned in column argument does not exist in dataFrame"
 
         # Output format date
-        Format = "yyyy-MM-dd"  # Some SimpleDateFormat string
+        format_dt = "yyyy-MM-dd"  # Some SimpleDateFormat string
 
         exprs = format_number(
             mag(
                 months_between(date_format(
-                    unix_timestamp(column, dates_format).cast("timestamp"), Format), current_date()) / 12), 4).alias(
+                    unix_timestamp(column, dates_format).cast("timestamp"), format_dt), current_date()) / 12), 4).alias(
             name_col_age)
 
         self._df = self._df.withColumn(name_col_age, exprs)
@@ -877,11 +879,11 @@ class DataFrameTransformer:
         but it in this context, operation are based in types recognized by the dataframe analyzer, types are identified
         according if the value is parsable to int or float, etc.
 
-        This functions makes the operation in column elements that are recognized as the same type that the dataType
+        This functions makes the operation in column elements that are recognized as the same type that the data_type
         argument provided in the input function.
 
         Columns provided in list of tuples cannot be repeated
-        :param parameters   List of columns in the following form: [(columnName, dataType, func),
+        :param parameters   List of columns in the following form: [(columnName, data_type, func),
                                                                     (columnName1, dataType1, func1)]
         :return None
         """
@@ -907,32 +909,32 @@ class DataFrameTransformer:
         types = {type('str'): 'string', type(1): 'int', type(1.0): 'float'}
 
         exprs = []
-        for column, dataType, func in parameters:
+        for column, data_type, func in parameters:
             # Cheking if column name is string datatype:
             self._assert_type_str(column, "columnName")
             # Checking if column exists in dataframe:
             assert column in self._df.columns, \
                 "Error: Column %s specified as columnName argument does not exist in dataframe" % column
             # Checking if column has a valid datatype:
-            assert (dataType in ['integer', 'float', 'string',
+            assert (data_type in ['integer', 'float', 'string',
                                  'null']), \
-                "Error: dataType only can be one of the followings options: integer, float, string, null."
-            # Checking if func parameters is func dataType or None
+                "Error: data_type only can be one of the followings options: integer, float, string, null."
+            # Checking if func parameters is func data_type or None
             assert isinstance(func, type(None)) or isinstance(func, type(lambda x: x)), \
                 "func argument must be a function or NoneType"
 
             if 'function' in str(type(func)):
-                func_udf = udf(lambda x: func(x) if check_data_type(x) == dataType else x)
+                func_udf = udf(lambda x: func(x) if check_data_type(x) == data_type else x)
 
             if isinstance(func, str) or isinstance(func, int) or isinstance(func, float):
                 assert [x[1] in types[type(func)] for x in filter(lambda x: x[0] == columnName, self._df.dtypes)][
                     0], \
                     "Error: Column of operation and func argument must be the same global type. " \
                     "Check column type by df.printSchema()"
-                func_udf = udf(lambda x: func if check_data_type(x) == dataType else x)
+                func_udf = udf(lambda x: func if check_data_type(x) == data_type else x)
 
             if func is None:
-                func_udf = udf(lambda x: None if check_data_type(x) == dataType else x)
+                func_udf = udf(lambda x: None if check_data_type(x) == data_type else x)
 
             exprs.append(func_udf(col(column)).alias(column))
 
@@ -1115,6 +1117,39 @@ class DataFrameTransformer:
         self._df = self._df.withColumn(column, func(col(column)))
         self.undo_vec_assembler(column=column, feature_names=feature_names)
         self._add_transformation()  # checkpoint in case
+
+        return self
+
+    def remove_empty_rows(self, how="all"):
+        """
+        Removes rows with null values. You can choose to drop the row if 'all' values are nulls or if
+        'any' of the values is null.
+
+        :param how: ‘any’ or ‘all’. If ‘any’, drop a row if it contains any nulls. If ‘all’, drop a row only if all its
+        values are null. The default is 'all'.
+        :return: Returns a new DataFrame omitting rows with null values.
+        """
+
+        assert isinstance(how, str), "Error, how argument provided must be a string."
+
+        assert how == 'all' or (
+               how == 'any'), "Error, how only can be 'all' or 'any'."
+
+        self._df = self._df.dropna(how)
+
+        return self
+
+    def remove_duplicates(self, cols=None):
+        """
+
+        :param cols: List of columns to make the comparison, this only  will consider this subset of columns,
+        for dropping duplicates. The default behavior will only drop the identical rows.
+        :return: Return a new DataFrame with duplicate rows removed
+        """
+
+        assert isinstance(cols, list), "Error, cols argument provided must be a list."
+
+        self._df = self._df.drop_duplicates(cols)
 
         return self
 
