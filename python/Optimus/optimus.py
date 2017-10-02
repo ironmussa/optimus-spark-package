@@ -1,7 +1,7 @@
 # Importing DataFrameTransformer library
-from python.optimus.df_transformer import DataFrameTransformer
+from optimus.df_transformer import DataFrameTransformer
 # Importing DataFrameAnalyzer library
-from python.optimus.df_analyzer import DataFrameAnalyzer
+from optimus.df_analyzer import DataFrameAnalyzer
 from pyspark.sql.dataframe import DataFrame
 
 
@@ -28,7 +28,7 @@ class Optimus:
 
     def get_data_frame(self):
         """This function return the dataframe of the class"""
-        return self.transformer.get_data_frame()
+        return self.transformer.get_data_frame
 
     def set_data_frame(self, df):
         """This function set a dataframe into the class for subsequent actions.
