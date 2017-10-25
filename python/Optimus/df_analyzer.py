@@ -407,7 +407,7 @@ class DataFrameAnalyzer:
             height = rect.get_height()
             # Plotting texts on bars:
             plt.text(rect.get_x() + rect.get_width() / 2.,
-                     1.001 * height, "%.2e" % int(height),
+                     1.001 * height, "{}".format(height),
                      va='bottom', rotation=90)
 
     def _plot_num_hist(self, hist_dict, column, values_bar):
@@ -503,11 +503,13 @@ class DataFrameAnalyzer:
         """This function return the dataframe of the class"""
         return self._df
 
-    def show(self):
+    def show(self, n=10, truncate=True):
         """This function shows the dataframe of the class
+        :param n: number or rows to show
+        :param truncate: If set to True, truncate strings longer than 20 chars by default.
         :rtype: pyspark.sql.dataframe.DataFrame.show()
         """
-        return self._df.show()
+        return self._df.show(n, truncate)
 
     # Function to give general features of dataFrame:
     def general_description(self):
@@ -817,8 +819,7 @@ class DataFrameAnalyzer:
             # outfile.write(str(json_cols).replace("'", "\""))
             outfile.write(json_cols)
 
-    @classmethod
-    def display_optimus(cls, df):
+    def display_optimus(self):
         """
         Lets you visualize your Spark object in different ways: table, charts, maps, etc.
         :param df: spark dataframe to be analyzed
@@ -826,7 +827,7 @@ class DataFrameAnalyzer:
         """
         # Import pixiedust-optimus
         from pixiedust_optimus.display import display
-        display(df)
+        display(self._df)
 
     def get_frequency(self, columns, sort_by_count=True):
         """
@@ -874,3 +875,4 @@ class DataFrameAnalyzer:
                         freq.show()
 
         return frequency(columns, sort_by_count)
+
